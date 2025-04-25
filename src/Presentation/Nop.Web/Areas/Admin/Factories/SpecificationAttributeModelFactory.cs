@@ -186,11 +186,10 @@ public partial class SpecificationAttributeModelFactory : ISpecificationAttribut
         ArgumentNullException.ThrowIfNull(searchModel);
 
         //get specification attributes
-        var specificationAttributes = await _specificationAttributeService.GetSpecificationAttributesAsync(
-            name: searchModel.AttributeName,
-            groupId: group?.Id, 
-            pageIndex: searchModel.Page - 1,
-            pageSize: searchModel.PageSize);
+
+        var specificationAttributes = string.IsNullOrEmpty(searchModel.AttributeName) ?  
+            await _specificationAttributeService.GetSpecificationAttributesByGroupIdAsync(group?.Id, pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize) :
+            await _specificationAttributeService.GetSpecificationAttributesByNameAsync(searchModel.AttributeName, pageIndex: searchModel.Page - 1, pageSize: searchModel.PageSize);
 
         //prepare list model
         var model = new SpecificationAttributeListModel().PrepareToGrid(searchModel, specificationAttributes, () =>
